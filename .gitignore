@@ -94,9 +94,7 @@ packages/docs/build/
 # ========================================
 # OMC (oh-my-claudecode internal)
 # ========================================
-.omc/state/
-.omc/sessions/
-.omc/drafts/
+.omc/
 
 # ========================================
 # Misc
