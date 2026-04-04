@@ -120,14 +120,18 @@ CREATE POLICY "Users can view own data"
 ```typescript
 // Lambda 함수: 결제 처리
 export const handler = async (event) => {
-  const { userId, amount } = event.body;
+  const { userId, amount } = JSON.parse(event.body);
   
   // Supabase에서 사용자 정보 조회
-  const user = await supabase
+  const { data: user, error } = await supabase
     .from('users')
     .select('*')
     .eq('id', userId)
     .single();
+  
+  if (error || !user) {
+    return { statusCode: 404, body: JSON.stringify({ error: 'User not found' }) };
+  }
   
   // 외부 결제 API 호출
   const payment = await stripe.charges.create({
@@ -140,22 +144,26 @@ export const handler = async (event) => {
     .from('payments')
     .insert({ user_id: userId, status: payment.status });
   
-  return { success: true, payment };
+  return { statusCode: 200, body: JSON.stringify({ success: true, payment }) };
 };
 ```
 
 ### 3단계: Webhook 연결
 ```javascript
-// Supabase: 주문 생성 시 Lambda 호출
+// Supabase v2: 주문 생성 시 Lambda 호출
 supabase
-  .from('orders')
-  .on('INSERT', payload => {
-    // AWS Lambda 호출
-    fetch('https://api.example.com/process-order', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-  })
+  .channel('orders')
+  .on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'orders' },
+    (payload) => {
+      // AWS Lambda 호출
+      fetch('https://api.example.com/process-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload.new)
+      });
+    }
+  )
   .subscribe();
 ```
 

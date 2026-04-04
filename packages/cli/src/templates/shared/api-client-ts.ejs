@@ -23,6 +23,9 @@ export interface RequestConfig {
 }
 
 <% if (hasAuth) { %>
+// WARNING: 모듈 레벨 상태 — 브라우저(SPA) 전용.
+// SSR에서는 이 토큰이 모든 동시 요청에 공유되어 사용자 간 토큰이 누출됩니다.
+// Next.js 서버 컴포넌트 등에서는 요청별로 RequestConfig.headers를 통해 토큰을 전달하세요.
 let authToken: string | null = null;
 
 export function setAuthToken(token: string | null): void {

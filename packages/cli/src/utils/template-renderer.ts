@@ -11,7 +11,10 @@ export async function renderTemplate(
   templatePath: string,
   data: Record<string, unknown>,
 ): Promise<string> {
-  const fullPath = path.join(TEMPLATES_DIR, templatePath);
+  const fullPath = path.resolve(TEMPLATES_DIR, templatePath);
+  if (!fullPath.startsWith(TEMPLATES_DIR + path.sep)) {
+    throw new Error(`Template path escapes templates directory: ${templatePath}`);
+  }
   const template = await readFile(fullPath, 'utf-8');
   return ejs.render(template, data, { filename: fullPath });
 }

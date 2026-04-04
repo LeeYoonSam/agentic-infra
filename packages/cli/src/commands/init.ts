@@ -4,6 +4,8 @@ import path from 'path';
 import { runPromptFlow } from '../prompts/index.js';
 import { generateProject } from '../generators/project-generator.js';
 
+const SAFE_PROJECT_NAME = /^[a-zA-Z0-9_-]+$/;
+
 export async function initCommand(projectName?: string): Promise<void> {
   console.log(chalk.bold.blue('\n🚀 Agentic Infra - 프로젝트 생성기\n'));
 
@@ -11,6 +13,11 @@ export async function initCommand(projectName?: string): Promise<void> {
 
   if (!config) {
     console.log(chalk.yellow('\n프로젝트 생성이 취소되었습니다.\n'));
+    return;
+  }
+
+  if (!SAFE_PROJECT_NAME.test(config.name)) {
+    console.log(chalk.red(`\n잘못된 프로젝트 이름: "${config.name}". 영문, 숫자, 하이픈, 언더스코어만 사용 가능합니다.\n`));
     return;
   }
 
