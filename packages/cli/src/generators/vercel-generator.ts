@@ -1,27 +1,14 @@
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import type { ProjectConfig } from '../types.js';
+import { renderTemplate } from '../utils/template-renderer.js';
 
 export async function generateVercel(config: ProjectConfig, outputDir: string): Promise<void> {
-  // vercel.json
-  const vercelConfig = {
-    $schema: 'https://openapi.vercel.sh/vercel.json',
-    framework: 'nextjs',
-  };
+  const data = { name: config.name, stack: config.stack, features: config.features };
 
-  await writeFile(
-    path.join(outputDir, 'vercel.json'),
-    JSON.stringify(vercelConfig, null, 2) + '\n',
-  );
+  const vercelContent = await renderTemplate('vercel/vercel.json.ejs', data);
+  await writeFile(path.join(outputDir, 'vercel.json'), vercelContent);
 
-  // next.config.js
-  const nextConfig = `/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-};
-
-export default nextConfig;
-`;
-
-  await writeFile(path.join(outputDir, 'next.config.js'), nextConfig);
+  const nextConfigContent = await renderTemplate('vercel/next.config.js.ejs', data);
+  await writeFile(path.join(outputDir, 'next.config.js'), nextConfigContent);
 }
