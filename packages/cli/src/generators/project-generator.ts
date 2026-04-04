@@ -6,6 +6,7 @@ import { generateSupabase } from './supabase-generator.js';
 import { generateAws } from './aws-generator.js';
 import { generateVercel } from './vercel-generator.js';
 import { generateClient } from './client-generator.js';
+import { generateApiClient } from './api-client-generator.js';
 
 const stackLabels: Record<string, string> = {
   supabase: 'Supabase',
@@ -46,10 +47,12 @@ export async function generateProject(config: ProjectConfig, outputDir: string):
   await mkdir(path.join(outputDir, 'src'), { recursive: true });
 
   // 스택별 생성기 실행
-  if (config.stack === 'supabase' || config.stack === 'hybrid') {
+  if (config.stack === 'hybrid') {
+    const { generateHybrid } = await import('./hybrid-generator.js');
+    await generateHybrid(config, outputDir);
+  } else if (config.stack === 'supabase') {
     await generateSupabase(config, outputDir);
-  }
-  if (config.stack === 'aws' || config.stack === 'hybrid') {
+  } else if (config.stack === 'aws') {
     await generateAws(config, outputDir);
   }
   if (config.deploy === 'vercel') {
@@ -58,4 +61,7 @@ export async function generateProject(config: ProjectConfig, outputDir: string):
 
   // 클라이언트 생성기 실행
   await generateClient(config, outputDir);
+
+  // API 클라이언트 생성
+  await generateApiClient(config, outputDir);
 }
