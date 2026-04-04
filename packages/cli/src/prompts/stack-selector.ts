@@ -1,6 +1,5 @@
 import { select } from '@inquirer/prompts';
-
-export type BackendStack = 'supabase' | 'aws' | 'hybrid';
+import type { BackendStack } from '../types.js';
 
 export async function selectStack(): Promise<BackendStack> {
   const stack = await select({

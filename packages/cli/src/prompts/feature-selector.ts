@@ -1,6 +1,5 @@
 import { checkbox } from '@inquirer/prompts';
-
-export type Feature = 'auth' | 'database' | 'storage' | 'push' | 'payments' | 'realtime';
+import type { Feature } from '../types.js';
 
 export async function selectFeatures(): Promise<Feature[]> {
   const features = await checkbox({

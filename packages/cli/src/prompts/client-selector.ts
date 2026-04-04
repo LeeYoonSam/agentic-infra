@@ -1,6 +1,5 @@
 import { select } from '@inquirer/prompts';
-
-export type ClientType = 'web' | 'android' | 'both';
+import type { ClientType } from '../types.js';
 
 export async function selectClient(): Promise<ClientType> {
   const client = await select({
