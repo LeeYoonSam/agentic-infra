@@ -18,8 +18,6 @@ const featureLabels: Record<string, string> = {
   auth: '인증',
   database: '데이터베이스',
   storage: '파일 스토리지',
-  push: '푸시 알림',
-  payments: '결제',
   realtime: '실시간',
 };
 

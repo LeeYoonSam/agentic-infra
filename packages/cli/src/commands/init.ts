@@ -30,8 +30,9 @@ export async function initCommand(projectName?: string): Promise<void> {
 
     console.log(chalk.cyan('\n다음 단계:\n'));
     console.log(`  cd ${config.name}`);
-    console.log('  npm install');
-    console.log('  npm run dev\n');
+    console.log('  pnpm install');
+    console.log('  pnpm dev');
+    console.log(chalk.gray('\n💡 Claude Code를 사용하면 /add-api, /add-page, /add-table 등의 명령으로 빠르게 기능을 추가할 수 있습니다.\n'));
   } catch (error) {
     spinner.fail(chalk.red('프로젝트 생성 실패'));
     throw error;
