@@ -38,13 +38,6 @@ const sidebars: SidebarsConfig = {
         'architecture/hybrid',
       ],
     },
-    {
-      type: 'category',
-      label: '가이드',
-      items: [
-        'guides/ralph-usage',
-      ],
-    },
   ],
 };
 
