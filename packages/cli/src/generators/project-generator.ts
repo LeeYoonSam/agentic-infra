@@ -7,6 +7,7 @@ import { generateAws } from './aws-generator.js';
 import { generateVercel } from './vercel-generator.js';
 import { generateClient } from './client-generator.js';
 import { generateApiClient } from './api-client-generator.js';
+import { generateClaudeCode } from './claude-generator.js';
 
 const stackLabels: Record<string, string> = {
   supabase: 'Supabase',
@@ -64,4 +65,7 @@ export async function generateProject(config: ProjectConfig, outputDir: string):
 
   // API 클라이언트 생성
   await generateApiClient(config, outputDir);
+
+  // Claude Code 통합 생성
+  await generateClaudeCode(config, outputDir);
 }

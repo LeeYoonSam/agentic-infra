@@ -1,0 +1,106 @@
+# /add-page — 새 페이지/화면 추가
+
+새 페이지 또는 화면을 추가합니다.
+
+## 사용법
+
+```
+/add-page <페이지명> <설명>
+```
+
+## 예시
+
+```
+/add-page login 로그인 페이지
+/add-page dashboard 대시보드 메인 화면
+/add-page product-detail 상품 상세 페이지
+```
+
+## 수행 단계
+
+$ARGUMENTS를 분석하여 다음을 수행하세요:
+
+<% if (client === 'web' || client === 'both') { -%>
+### Next.js 페이지 생성
+
+1. `web/src/app/<페이지명>/page.tsx` 파일 생성
+2. 다음 패턴을 따르세요:
+
+```typescript
+export default function <PascalCase페이지명>Page() {
+  return (
+    <main className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold"><페이지 제목></h1>
+      {/* TODO: 페이지 내용 구현 */}
+    </main>
+  );
+}
+```
+
+3. 데이터 fetching이 필요하면 Server Component로 구현:
+
+```typescript
+async function getData() {
+  // API 클라이언트 사용
+}
+
+export default async function <PascalCase페이지명>Page() {
+  const data = await getData();
+  return <main>{/* 데이터 렌더링 */}</main>;
+}
+```
+
+4. 로딩 상태가 필요하면 `web/src/app/<페이지명>/loading.tsx` 추가
+5. 에러 처리가 필요하면 `web/src/app/<페이지명>/error.tsx` 추가
+
+<% if (features.includes('auth')) { -%>
+6. 인증이 필요한 페이지라면 세션 체크 추가:
+
+```typescript
+import { getCurrentUser } from '../../lib/auth';
+import { redirect } from 'next/navigation';
+
+export default async function ProtectedPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  // ...
+}
+```
+<% } -%>
+<% } -%>
+
+<% if (client === 'android' || client === 'both') { -%>
+### Android Compose 화면 생성
+
+1. `android/app/src/main/kotlin/ui/<PascalCase페이지명>Screen.kt` 생성
+2. 다음 패턴을 따르세요:
+
+```kotlin
+@Composable
+fun <PascalCase페이지명>Screen(
+    onNavigateBack: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "<페이지 제목>",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        // TODO: 화면 내용 구현
+    }
+}
+```
+
+3. Navigation 그래프에 새 화면 등록
+<% } -%>
+
+### 검증
+
+구현 후 반드시 확인:
+- `npx tsc --noEmit` (타입 에러 없음)
+<% if (client === 'web' || client === 'both') { -%>
+- `cd web && npm run dev`로 페이지 접근 가능 확인
+<% } -%>

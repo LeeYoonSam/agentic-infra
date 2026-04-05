@@ -1,0 +1,159 @@
+# <%= name %> - Project Instructions
+
+## Project Overview
+
+<%= name %>은(는) Agentic Infra로 생성된 프로젝트입니다.
+
+- **Backend**: <%= stackLabel %>
+- **Client**: <%= clientLabel %>
+- **Deploy**: <%= deployLabel %>
+
+## Project Structure
+
+```
+<%= name %>/
+├── package.json
+├── tsconfig.json
+├── .env.example
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+├── supabase/
+│   ├── config.toml
+│   ├── functions/api/index.ts    # Edge Functions
+│   └── migrations/               # DB 마이그레이션
+├── src/lib/
+│   ├── supabase.ts               # Supabase 클라이언트
+<% if (features.includes('auth')) { -%>
+│   ├── auth.ts                   # 인증 함수
+<% } -%>
+<% if (features.includes('storage')) { -%>
+│   ├── storage.ts                # 파일 스토리지
+<% } -%>
+<% if (features.includes('realtime')) { -%>
+│   ├── realtime.ts               # 실시간 구독
+<% } -%>
+<% } -%>
+<% if (stack === 'aws' || stack === 'hybrid') { -%>
+├── src/
+│   ├── cdk-stack.ts              # AWS CDK 스택 정의
+│   ├── lambda/                   # Lambda 핸들러
+<% if (features.includes('auth')) { -%>
+│   ├── cognito-auth.ts           # Cognito 인증
+<% } -%>
+<% if (features.includes('storage')) { -%>
+│   ├── s3-storage.ts             # S3 스토리지
+<% } -%>
+<% } -%>
+<% if (client === 'web' || client === 'both') { -%>
+├── web/                          # Next.js 앱
+│   └── src/app/                  # App Router 페이지
+<% } -%>
+<% if (client === 'android' || client === 'both') { -%>
+├── android/                      # Android 앱 (Kotlin/Compose)
+│   └── app/src/main/kotlin/
+<% } -%>
+└── src/api-client.ts             # Type-safe API 클라이언트
+```
+
+## Coding Conventions
+
+- TypeScript strict 모드 필수
+- ESModules 사용 (`import`/`export`)
+- 파일명: kebab-case (예: `user-profile.ts`)
+- 함수/변수: camelCase
+- 타입/인터페이스: PascalCase
+- 컴포넌트: PascalCase (예: `UserProfile.tsx`)
+
+## Available Commands
+
+```bash
+pnpm install         # 의존성 설치
+pnpm dev             # 개발 서버 실행
+pnpm build           # 빌드
+pnpm lint            # 린트 검사
+pnpm test            # 테스트 실행
+```
+
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+### Supabase Commands
+```bash
+supabase start       # 로컬 Supabase 실행
+supabase db push     # 마이그레이션 적용
+supabase functions serve  # Edge Functions 로컬 실행
+```
+<% } -%>
+
+<% if (stack === 'aws' || stack === 'hybrid') { -%>
+### AWS Commands
+```bash
+npx cdk synth        # CloudFormation 템플릿 생성
+npx cdk deploy       # AWS 배포
+npx cdk diff         # 변경사항 확인
+```
+<% } -%>
+
+<% if (deploy === 'vercel') { -%>
+### Deploy Commands
+```bash
+vercel dev           # Vercel 로컬 개발
+vercel --prod        # 프로덕션 배포
+```
+<% } -%>
+
+## Custom Skills
+
+이 프로젝트에는 Claude Code 커스텀 스킬이 포함되어 있습니다:
+
+| 명령어 | 설명 |
+|--------|------|
+| `/add-api` | 새 API 엔드포인트 추가 |
+| `/add-page` | 새 페이지/화면 추가 |
+| `/add-table` | 새 DB 테이블 + 마이그레이션 추가 |
+| `/deploy` | 서비스 배포 |
+
+## Stack-Specific Patterns
+
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+### Supabase 패턴
+
+- **클라이언트 사용**: `src/lib/supabase.ts`에서 import. 새 인스턴스를 절대 만들지 마세요.
+  ```typescript
+  import { supabase } from '../lib/supabase';
+  ```
+- **새 API 추가**: `supabase/functions/` 아래에 Edge Function으로 추가
+- **새 테이블 추가**: `supabase/migrations/`에 SQL 마이그레이션 파일 생성
+- **RLS 필수**: 모든 새 테이블에 Row Level Security 정책을 반드시 추가
+- **환경변수**: `.env`에 `SUPABASE_URL`과 `SUPABASE_ANON_KEY` 필요
+
+<% } -%>
+<% if (stack === 'aws' || stack === 'hybrid') { -%>
+### AWS 패턴
+
+- **새 Lambda 추가**: `src/lambda/`에 핸들러 생성 후 `src/cdk-stack.ts`에 등록
+- **API Gateway**: `src/api-gateway.ts`에서 라우트 추가
+- **DynamoDB 테이블**: `src/cdk-stack.ts`에 테이블 정의 추가
+- **환경변수**: `.env`에 AWS 리전, 계정 정보 필요
+
+<% } -%>
+<% if (features.includes('auth')) { -%>
+### 인증 패턴
+
+- 보호된 페이지/API에서는 반드시 인증 상태를 확인하세요
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+- `src/lib/auth.ts`의 `getCurrentUser()`로 현재 사용자 확인
+- OAuth 추가 시 Supabase Dashboard에서 Provider 활성화 필요
+<% } -%>
+<% if (stack === 'aws') { -%>
+- `src/cognito-auth.ts`의 인증 함수 사용
+<% } -%>
+
+<% } -%>
+## Security Rules
+
+- `.env` 파일을 절대 커밋하지 마세요
+- API 키를 클라이언트 코드에 하드코딩하지 마세요
+- SQL 쿼리는 반드시 파라미터화된 쿼리를 사용하세요
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+- `service_role` 키를 클라이언트에 노출하지 마세요
+- 모든 테이블에 RLS 정책을 적용하세요
+<% } -%>
+- 사용자 입력은 반드시 검증(validation)하세요

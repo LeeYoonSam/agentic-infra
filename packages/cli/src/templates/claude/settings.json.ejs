@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PreCommit": [
+      {
+        "command": "npx tsc --noEmit",
+        "description": "TypeScript 타입 검사"
+      },
+      {
+        "command": "npx eslint . --max-warnings 0",
+        "description": "ESLint 검사"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "npx tsc *",
+      "npx eslint *",
+      "npx prettier *",
+      "npm run *"<% if (stack === 'supabase' || stack === 'hybrid') { %>,
+      "supabase *"<% } %><% if (stack === 'aws' || stack === 'hybrid') { %>,
+      "npx cdk *"<% } %><% if (deploy === 'vercel') { %>,
+      "vercel *"<% } %>
+    ]
+  }
+}

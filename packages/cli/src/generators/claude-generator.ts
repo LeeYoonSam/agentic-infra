@@ -1,0 +1,55 @@
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
+import type { ProjectConfig } from '../types.js';
+import { renderTemplate } from '../utils/template-renderer.js';
+
+const deployLabels: Record<string, string> = {
+  vercel: 'Vercel',
+  aws: 'AWS',
+  manual: '수동 배포',
+};
+
+const stackLabels: Record<string, string> = {
+  supabase: 'Supabase',
+  aws: 'AWS',
+  hybrid: 'Supabase + AWS 하이브리드',
+};
+
+const clientLabels: Record<string, string> = {
+  web: 'Next.js',
+  android: 'Android (Kotlin/Compose)',
+  both: 'Next.js + Android',
+};
+
+export async function generateClaudeCode(config: ProjectConfig, outputDir: string): Promise<void> {
+  const claudeDir = path.join(outputDir, '.claude');
+  const commandsDir = path.join(claudeDir, 'commands');
+  await mkdir(commandsDir, { recursive: true });
+
+  const data = {
+    name: config.name,
+    stack: config.stack,
+    client: config.client,
+    features: config.features,
+    deploy: config.deploy,
+    stackLabel: stackLabels[config.stack],
+    clientLabel: clientLabels[config.client],
+    deployLabel: deployLabels[config.deploy],
+    hasAuth: config.features.includes('auth'),
+  };
+
+  // CLAUDE.md (프로젝트 루트)
+  const claudeMdContent = await renderTemplate('claude/CLAUDE.md.ejs', data);
+  await writeFile(path.join(outputDir, 'CLAUDE.md'), claudeMdContent);
+
+  // .claude/settings.json (hooks & permissions)
+  const settingsContent = await renderTemplate('claude/settings.json.ejs', data);
+  await writeFile(path.join(claudeDir, 'settings.json'), settingsContent);
+
+  // Skills (commands)
+  const skills = ['add-api', 'add-page', 'add-table', 'deploy'];
+  for (const skill of skills) {
+    const content = await renderTemplate(`claude/commands/${skill}.md.ejs`, data);
+    await writeFile(path.join(commandsDir, `${skill}.md`), content);
+  }
+}

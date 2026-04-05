@@ -1,0 +1,117 @@
+# /add-table — 새 DB 테이블 추가
+
+새 데이터베이스 테이블과 마이그레이션을 생성합니다.
+
+## 사용법
+
+```
+/add-table <테이블명> <컬럼 설명>
+```
+
+## 예시
+
+```
+/add-table products 이름, 가격, 설명, 카테고리, 이미지URL
+/add-table orders 사용자ID, 상품ID, 수량, 총액, 상태
+/add-table comments 게시글ID, 작성자ID, 내용, 작성일
+```
+
+## 수행 단계
+
+$ARGUMENTS를 분석하여 다음을 수행하세요:
+
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+### Supabase 마이그레이션 생성
+
+1. 기존 마이그레이션 파일 번호를 확인하고 다음 번호로 생성:
+   `supabase/migrations/<다음번호>_create_<테이블명>.sql`
+
+2. 다음 패턴을 따르세요:
+
+```sql
+-- Create <테이블명> table
+CREATE TABLE IF NOT EXISTS <테이블명> (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  -- $ARGUMENTS에서 파악한 컬럼들
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- Enable RLS (필수!)
+ALTER TABLE <테이블명> ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies
+CREATE POLICY "<테이블명>_select_policy" ON <테이블명>
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+CREATE POLICY "<테이블명>_insert_policy" ON <테이블명>
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "<테이블명>_update_policy" ON <테이블명>
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "<테이블명>_delete_policy" ON <테이블명>
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- Updated at trigger
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER <테이블명>_updated_at
+  BEFORE UPDATE ON <테이블명>
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+```
+
+3. **중요**: user_id 컬럼이 없는 공개 테이블이면 RLS 정책을 적절히 수정하세요.
+<% } -%>
+
+<% if (stack === 'aws') { -%>
+### DynamoDB 테이블 생성
+
+1. `src/cdk-stack.ts`에 테이블 정의 추가:
+
+```typescript
+const <테이블명>Table = new dynamodb.Table(this, '<PascalCase테이블명>Table', {
+  tableName: `${props.projectName}-<테이블명>`,
+  partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+  sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
+  billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+  removalPolicy: cdk.RemovalPolicy.RETAIN,
+});
+```
+
+2. Lambda에서 사용할 수 있도록 환경변수로 테이블명 전달
+<% } -%>
+
+### TypeScript 타입 생성
+
+`src/types/<테이블명>.ts` 파일을 생성하세요:
+
+```typescript
+export interface <PascalCase테이블명> {
+  id: string;
+  // $ARGUMENTS에서 파악한 필드들
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type Create<PascalCase테이블명>Input = Omit<<PascalCase테이블명>, 'id' | 'createdAt' | 'updatedAt'>;
+export type Update<PascalCase테이블명>Input = Partial<Create<PascalCase테이블명>Input>;
+```
+
+### 검증
+
+구현 후 반드시 확인:
+<% if (stack === 'supabase' || stack === 'hybrid') { -%>
+- `supabase db push` (마이그레이션 적용)
+- RLS 정책이 적용되었는지 확인
+<% } -%>
+<% if (stack === 'aws') { -%>
+- `npx cdk synth` (CDK 스택 정상 생성)
+<% } -%>
+- `npx tsc --noEmit` (타입 에러 없음)
