@@ -36,13 +36,13 @@ async function generateWebClient(config: ProjectConfig, outputDir: string): Prom
       lint: 'next lint',
     },
     dependencies: {
-      next: '^15.1.0',
-      react: '^19.0.0',
-      'react-dom': '^19.0.0',
+      next: '^16.2.0',
+      react: '^19.2.0',
+      'react-dom': '^19.2.0',
     },
     devDependencies: {
-      '@types/react': '^19.0.0',
-      typescript: '^5.7.2',
+      '@types/react': '^19.2.0',
+      typescript: '^5.8.0',
     },
   };
 
@@ -92,8 +92,8 @@ include(":app")
   // build.gradle.kts (root)
   await writeFile(path.join(androidDir, 'build.gradle.kts'), `plugins {
     id("com.android.application") version "8.7.3" apply false
-    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21" apply false
+    id("org.jetbrains.kotlin.android") version "2.3.20" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20" apply false
 }
 `);
 
@@ -131,7 +131,7 @@ android {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
+    val composeBom = platform("androidx.compose:compose-bom:2026.03.00")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
@@ -273,17 +273,17 @@ async function generateReactNativeClient(config: ProjectConfig, outputDir: strin
       lint: 'expo lint',
     },
     dependencies: {
-      expo: '~52.0.0',
-      'expo-router': '~4.0.0',
-      'expo-status-bar': '~2.0.0',
-      react: '^18.3.1',
-      'react-native': '0.76.5',
-      'react-native-safe-area-context': '4.14.0',
-      'react-native-screens': '~4.4.0',
+      expo: '~55.0.0',
+      'expo-router': '~5.0.0',
+      'expo-status-bar': '~3.0.0',
+      react: '^19.2.0',
+      'react-native': '0.83.0',
+      'react-native-safe-area-context': '5.4.0',
+      'react-native-screens': '~5.0.0',
     },
     devDependencies: {
-      '@types/react': '~18.3.0',
-      typescript: '^5.7.2',
+      '@types/react': '~19.2.0',
+      typescript: '^5.8.0',
     },
   };
 
@@ -354,7 +354,7 @@ version: 0.1.0
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
-  flutter: ">=3.24.0"
+  flutter: ">=3.41.0"
 
 dependencies:
   flutter:
