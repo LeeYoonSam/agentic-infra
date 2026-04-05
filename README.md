@@ -8,8 +8,9 @@ AI 기반 인프라/백엔드 자동 구성 도구
 ## 주요 기능
 
 - **백엔드 스택 선택** — Supabase, AWS Lambda, 하이브리드(Supabase + AWS) 중 선택
-- **클라이언트 코드 생성** — Web(TypeScript), Android(Kotlin) 또는 둘 다 지원
-- **기능 모듈** — 인증(Auth), 데이터베이스, 스토리지, 푸시 알림, 결제, 실시간(Realtime) 모듈 조합
+- **클라이언트 코드 생성** — Web(Next.js), Android(Kotlin/Compose), iOS(SwiftUI), React Native(Expo), Flutter 지원 (복수 선택 가능)
+- **기능 모듈** — 인증(Auth), 데이터베이스, 스토리지, 실시간(Realtime) 모듈 조합
+- **Claude Code 통합** — 생성된 프로젝트에 Claude Code Skills(`/add-api`, `/add-page`, `/add-table`, `/deploy`)와 CLAUDE.md, hooks 설정이 자동 포함
 - **배포 플랫폼** — Vercel, AWS, 수동 배포 중 선택
 - **템플릿 기반 코드 생성** — EJS 템플릿으로 프로젝트 보일러플레이트 자동 생성
 
@@ -42,12 +43,12 @@ $ npx agentic-infra init
 
 ? 프로젝트 이름: my-app
 ? 백엔드 스택: Supabase / AWS / 하이브리드
-? 클라이언트 유형: Web / Android / 둘 다
-? 기능 모듈: Auth, Database, Storage, ...
+? 클라이언트 플랫폼: Web, Android, iOS, React Native, Flutter (복수 선택)
+? 기능 모듈: Auth, Database, Storage, Realtime
 ? 배포 플랫폼: Vercel / AWS / 수동
 ```
 
-생성이 완료되면 안내에 따라 `cd my-app && npm install && npm run dev`로 바로 시작할 수 있습니다.
+생성이 완료되면 안내에 따라 `cd my-app && pnpm install && pnpm dev`로 바로 시작할 수 있습니다.
 
 ## 프로젝트 구조
 
@@ -174,11 +175,13 @@ pnpm start
 
 ### 클라이언트
 
-| 유형 | 생성물 |
-|------|--------|
-| **Web** | TypeScript API 클라이언트 |
-| **Android** | Kotlin API 클라이언트 |
-| **둘 다** | Web + Android 동시 생성 |
+| 플랫폼 | 프레임워크 | API 클라이언트 |
+|--------|-----------|---------------|
+| **Web** | Next.js 16 (App Router) | TypeScript (fetch) |
+| **Android** | Kotlin 2.3 / Jetpack Compose | Kotlin (Ktor) |
+| **iOS** | Swift 5.9 / SwiftUI | Swift (URLSession) |
+| **React Native** | Expo SDK 55 | TypeScript (fetch) |
+| **Flutter** | Flutter 3.41 / Dart 3.7 | Dart (http) |
 
 ### 배포 플랫폼
 

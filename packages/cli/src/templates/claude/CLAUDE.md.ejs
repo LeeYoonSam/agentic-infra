@@ -44,11 +44,11 @@
 <% } -%>
 <% } -%>
 <% if (clients.includes('web')) { -%>
-├── web/                          # Next.js 15 앱
+├── web/                          # Next.js 16 앱
 │   └── src/app/                  # App Router 페이지
 <% } -%>
 <% if (clients.includes('android')) { -%>
-├── android/                      # Android 앱 (Kotlin 2.0/Compose)
+├── android/                      # Android 앱 (Kotlin 2.3/Compose)
 │   └── app/src/main/kotlin/
 <% } -%>
 <% if (clients.includes('ios')) { -%>
@@ -56,11 +56,11 @@
 │   └── <appName>/
 <% } -%>
 <% if (clients.includes('react-native')) { -%>
-├── mobile/                       # React Native (Expo SDK 52)
+├── mobile/                       # React Native (Expo SDK 55)
 │   └── app/                      # Expo Router 페이지
 <% } -%>
 <% if (clients.includes('flutter')) { -%>
-├── flutter/                      # Flutter 3.24 앱
+├── flutter/                      # Flutter 3.41 앱
 │   └── lib/                      # Dart 소스
 <% } -%>
 └── src/api-client.ts             # Type-safe API 클라이언트

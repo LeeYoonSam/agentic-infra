@@ -1,0 +1,58 @@
+---
+name: sync-docs
+description: 기술 스펙 변경 시 README.md, CLAUDE.md 등 프로젝트 문서를 자동으로 동기화합니다
+---
+
+# /sync-docs — 문서 동기화
+
+프로젝트의 기술 스펙(package.json, pubspec.yaml, build.gradle.kts 등)을 확인하고,
+README.md, CLAUDE.md 등 문서에 기록된 버전/구조 정보를 최신 상태로 업데이트합니다.
+
+## 수행 단계
+
+### 1. 현재 기술 스펙 수집
+
+다음 파일에서 실제 사용 중인 버전을 읽으세요:
+
+<% if (clients.includes('web')) { -%>
+- `web/package.json` → Next.js, React 버전
+<% } -%>
+<% if (clients.includes('android')) { -%>
+- `android/app/build.gradle.kts` → Kotlin, Compose BOM, compileSdk 버전
+- `android/build.gradle.kts` → AGP, Kotlin 플러그인 버전
+<% } -%>
+<% if (clients.includes('ios')) { -%>
+- `ios/Package.swift` → Swift tools 버전, iOS 최소 지원 버전
+<% } -%>
+<% if (clients.includes('react-native')) { -%>
+- `mobile/package.json` → Expo SDK, React Native, React 버전
+<% } -%>
+<% if (clients.includes('flutter')) { -%>
+- `flutter/pubspec.yaml` → Flutter, Dart SDK 버전
+<% } -%>
+- `package.json` (루트) → TypeScript 등 공통 의존성
+
+### 2. 문서와 비교
+
+수집한 실제 버전과 다음 문서의 버전 기록을 비교하세요:
+
+- `README.md` — 기술 스택 테이블, 클라이언트 테이블
+- `CLAUDE.md` — Project Structure 섹션, Available Commands 섹션
+
+### 3. 불일치 수정
+
+불일치가 발견되면:
+1. 문서의 버전 번호를 실제 값으로 업데이트
+2. 새로 추가된 의존성이 있으면 문서에 반영
+3. 제거된 의존성이 있으면 문서에서 삭제
+4. 프로젝트 구조가 변경되었으면 트리 다이어그램 업데이트
+
+### 4. 검증
+
+- 변경된 문서의 마크다운 문법이 올바른지 확인
+- 버전 번호가 실제 파일과 일치하는지 재확인
+
+## 자동 실행
+
+이 스킬은 `settings.json`의 hook에 의해 의존성 파일 변경 시 자동으로 실행됩니다.
+수동으로 실행하려면 `/sync-docs`를 입력하세요.
