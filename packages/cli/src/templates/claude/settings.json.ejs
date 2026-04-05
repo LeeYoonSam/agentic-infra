@@ -8,6 +8,10 @@
       {
         "command": "npx eslint . --max-warnings 0",
         "description": "ESLint 검사"
+      },
+      {
+        "command": "npx vitest run --reporter=dot 2>/dev/null || true",
+        "description": "테스트 실행"
       }
     ],
     "PostToolUse": [

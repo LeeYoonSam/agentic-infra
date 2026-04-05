@@ -50,7 +50,7 @@ export async function generateClaudeCode(config: ProjectConfig, outputDir: strin
   await writeFile(path.join(claudeDir, 'settings.json'), settingsContent);
 
   // Skills (.claude/skills/<name>/SKILL.md)
-  const skills = ['add-api', 'add-page', 'add-table', 'deploy', 'sync-docs'];
+  const skills = ['add-api', 'add-page', 'add-table', 'deploy', 'sync-docs', 'implement'];
   for (const skill of skills) {
     const skillDir = path.join(claudeDir, 'skills', skill);
     await mkdir(skillDir, { recursive: true });
