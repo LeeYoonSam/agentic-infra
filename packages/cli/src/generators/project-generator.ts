@@ -18,20 +18,24 @@ const stackLabels: Record<string, string> = {
 const clientLabels: Record<string, string> = {
   web: 'Next.js',
   android: 'Android (Kotlin/Compose)',
-  both: 'Next.js + Android',
+  ios: 'iOS (SwiftUI)',
+  'react-native': 'React Native (Expo)',
+  flutter: 'Flutter',
 };
 
 export async function generateProject(config: ProjectConfig, outputDir: string): Promise<void> {
   await mkdir(outputDir, { recursive: true });
 
+  const clientLabel = config.clients.map(c => clientLabels[c]).join(' + ');
+
   const data = {
     name: config.name,
     stack: config.stack,
-    client: config.client,
+    clients: config.clients,
     features: config.features,
     deploy: config.deploy,
     stackLabel: stackLabels[config.stack],
-    clientLabel: clientLabels[config.client],
+    clientLabel,
   };
 
   // 공통 템플릿으로 생성

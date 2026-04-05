@@ -43,13 +43,25 @@
 │   ├── s3-storage.ts             # S3 스토리지
 <% } -%>
 <% } -%>
-<% if (client === 'web' || client === 'both') { -%>
-├── web/                          # Next.js 앱
+<% if (clients.includes('web')) { -%>
+├── web/                          # Next.js 15 앱
 │   └── src/app/                  # App Router 페이지
 <% } -%>
-<% if (client === 'android' || client === 'both') { -%>
-├── android/                      # Android 앱 (Kotlin/Compose)
+<% if (clients.includes('android')) { -%>
+├── android/                      # Android 앱 (Kotlin 2.0/Compose)
 │   └── app/src/main/kotlin/
+<% } -%>
+<% if (clients.includes('ios')) { -%>
+├── ios/                          # iOS 앱 (Swift 5.9/SwiftUI)
+│   └── <appName>/
+<% } -%>
+<% if (clients.includes('react-native')) { -%>
+├── mobile/                       # React Native (Expo SDK 52)
+│   └── app/                      # Expo Router 페이지
+<% } -%>
+<% if (clients.includes('flutter')) { -%>
+├── flutter/                      # Flutter 3.24 앱
+│   └── lib/                      # Dart 소스
 <% } -%>
 └── src/api-client.ts             # Type-safe API 클라이언트
 ```

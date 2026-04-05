@@ -20,7 +20,7 @@
 
 $ARGUMENTS를 분석하여 다음을 수행하세요:
 
-<% if (client === 'web' || client === 'both') { -%>
+<% if (clients.includes('web')) { -%>
 ### Next.js 페이지 생성
 
 1. `web/src/app/<페이지명>/page.tsx` 파일 생성
@@ -37,19 +37,7 @@ export default function <PascalCase페이지명>Page() {
 }
 ```
 
-3. 데이터 fetching이 필요하면 Server Component로 구현:
-
-```typescript
-async function getData() {
-  // API 클라이언트 사용
-}
-
-export default async function <PascalCase페이지명>Page() {
-  const data = await getData();
-  return <main>{/* 데이터 렌더링 */}</main>;
-}
-```
-
+3. 데이터 fetching이 필요하면 Server Component로 구현
 4. 로딩 상태가 필요하면 `web/src/app/<페이지명>/loading.tsx` 추가
 5. 에러 처리가 필요하면 `web/src/app/<페이지명>/error.tsx` 추가
 
@@ -69,7 +57,7 @@ export default async function ProtectedPage() {
 <% } -%>
 <% } -%>
 
-<% if (client === 'android' || client === 'both') { -%>
+<% if (clients.includes('android')) { -%>
 ### Android Compose 화면 생성
 
 1. `android/app/src/main/kotlin/ui/<PascalCase페이지명>Screen.kt` 생성
@@ -81,14 +69,9 @@ fun <PascalCase페이지명>Screen(
     onNavigateBack: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        Text(
-            text = "<페이지 제목>",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Text(text = "<페이지 제목>", style = MaterialTheme.typography.headlineMedium)
         // TODO: 화면 내용 구현
     }
 }
@@ -97,10 +80,99 @@ fun <PascalCase페이지명>Screen(
 3. Navigation 그래프에 새 화면 등록
 <% } -%>
 
+<% if (clients.includes('ios')) { -%>
+### iOS SwiftUI 뷰 생성
+
+1. `ios/<AppName>/<PascalCase페이지명>View.swift` 생성
+2. 다음 패턴을 따르세요:
+
+```swift
+import SwiftUI
+
+struct <PascalCase페이지명>View: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("<페이지 제목>")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            // TODO: 뷰 내용 구현
+        }
+        .padding()
+    }
+}
+
+#Preview {
+    <PascalCase페이지명>View()
+}
+```
+
+3. NavigationStack에 새 뷰 연결
+<% } -%>
+
+<% if (clients.includes('react-native')) { -%>
+### React Native (Expo Router) 화면 생성
+
+1. `mobile/app/<페이지명>.tsx` 파일 생성
+2. 다음 패턴을 따르세요:
+
+```typescript
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function <PascalCase페이지명>Screen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}><페이지 제목></Text>
+      {/* TODO: 화면 내용 구현 */}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 28, fontWeight: 'bold' },
+});
+```
+
+3. Expo Router는 파일 기반 라우팅이므로 별도 등록 불필요
+<% } -%>
+
+<% if (clients.includes('flutter')) { -%>
+### Flutter 화면 생성
+
+1. `flutter/lib/screens/<snake_case_페이지명>_screen.dart` 생성
+2. 다음 패턴을 따르세요:
+
+```dart
+import 'package:flutter/material.dart';
+
+class <PascalCase페이지명>Screen extends StatelessWidget {
+  const <PascalCase페이지명>Screen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('<페이지 제목>')),
+      body: const Center(
+        child: Text('TODO: 화면 내용 구현'),
+      ),
+    );
+  }
+}
+```
+
+3. `MaterialApp`의 routes 또는 Navigator에 새 화면 등록
+<% } -%>
+
 ### 검증
 
 구현 후 반드시 확인:
-- `npx tsc --noEmit` (타입 에러 없음)
-<% if (client === 'web' || client === 'both') { -%>
-- `cd web && npm run dev`로 페이지 접근 가능 확인
+<% if (clients.includes('web')) { -%>
+- `cd web && pnpm dev`로 페이지 접근 가능 확인
 <% } -%>
+<% if (clients.includes('react-native')) { -%>
+- `cd mobile && pnpm dev`로 Expo에서 화면 확인
+<% } -%>
+<% if (clients.includes('flutter')) { -%>
+- `cd flutter && flutter run`으로 화면 확인
+<% } -%>
+- 타입/컴파일 에러 없음 확인

@@ -18,7 +18,9 @@ const stackLabels: Record<string, string> = {
 const clientLabels: Record<string, string> = {
   web: 'Next.js',
   android: 'Android (Kotlin/Compose)',
-  both: 'Next.js + Android',
+  ios: 'iOS (SwiftUI)',
+  'react-native': 'React Native (Expo)',
+  flutter: 'Flutter',
 };
 
 export async function generateClaudeCode(config: ProjectConfig, outputDir: string): Promise<void> {
@@ -26,14 +28,16 @@ export async function generateClaudeCode(config: ProjectConfig, outputDir: strin
   const commandsDir = path.join(claudeDir, 'commands');
   await mkdir(commandsDir, { recursive: true });
 
+  const clientLabel = config.clients.map(c => clientLabels[c]).join(' + ');
+
   const data = {
     name: config.name,
     stack: config.stack,
-    client: config.client,
+    clients: config.clients,
     features: config.features,
     deploy: config.deploy,
     stackLabel: stackLabels[config.stack],
-    clientLabel: clientLabels[config.client],
+    clientLabel,
     deployLabel: deployLabels[config.deploy],
     hasAuth: config.features.includes('auth'),
   };

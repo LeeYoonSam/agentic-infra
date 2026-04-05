@@ -11,7 +11,9 @@ const stackLabels: Record<string, string> = {
 const clientLabels: Record<string, string> = {
   web: 'Web (Next.js)',
   android: 'Android (Kotlin/Compose)',
-  both: 'Web + Android',
+  ios: 'iOS (SwiftUI)',
+  'react-native': 'React Native (Expo)',
+  flutter: 'Flutter',
 };
 
 const featureLabels: Record<string, string> = {
@@ -31,7 +33,7 @@ export async function confirmConfig(config: ProjectConfig): Promise<boolean> {
   console.log(chalk.bold('\n📋 프로젝트 설정 요약:\n'));
   console.log(`  ${chalk.cyan('프로젝트명:')}  ${config.name}`);
   console.log(`  ${chalk.cyan('백엔드:')}      ${stackLabels[config.stack]}`);
-  console.log(`  ${chalk.cyan('클라이언트:')}  ${clientLabels[config.client]}`);
+  console.log(`  ${chalk.cyan('클라이언트:')}  ${config.clients.map(c => clientLabels[c]).join(', ')}`);
   console.log(`  ${chalk.cyan('기능:')}        ${config.features.map(f => featureLabels[f]).join(', ')}`);
   console.log(`  ${chalk.cyan('배포:')}        ${deployLabels[config.deploy]}`);
   console.log('');
