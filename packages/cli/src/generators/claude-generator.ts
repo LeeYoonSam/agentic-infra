@@ -25,8 +25,7 @@ const clientLabels: Record<string, string> = {
 
 export async function generateClaudeCode(config: ProjectConfig, outputDir: string): Promise<void> {
   const claudeDir = path.join(outputDir, '.claude');
-  const commandsDir = path.join(claudeDir, 'commands');
-  await mkdir(commandsDir, { recursive: true });
+  await mkdir(claudeDir, { recursive: true });
 
   const clientLabel = config.clients.map(c => clientLabels[c]).join(' + ');
 
@@ -50,10 +49,12 @@ export async function generateClaudeCode(config: ProjectConfig, outputDir: strin
   const settingsContent = await renderTemplate('claude/settings.json.ejs', data);
   await writeFile(path.join(claudeDir, 'settings.json'), settingsContent);
 
-  // Skills (commands)
+  // Skills (.claude/skills/<name>/SKILL.md)
   const skills = ['add-api', 'add-page', 'add-table', 'deploy'];
   for (const skill of skills) {
-    const content = await renderTemplate(`claude/commands/${skill}.md.ejs`, data);
-    await writeFile(path.join(commandsDir, `${skill}.md`), content);
+    const skillDir = path.join(claudeDir, 'skills', skill);
+    await mkdir(skillDir, { recursive: true });
+    const content = await renderTemplate(`claude/skills/${skill}/SKILL.md.ejs`, data);
+    await writeFile(path.join(skillDir, 'SKILL.md'), content);
   }
 }

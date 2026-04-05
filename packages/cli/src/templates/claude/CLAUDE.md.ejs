@@ -113,7 +113,8 @@ vercel --prod        # 프로덕션 배포
 
 ## Custom Skills
 
-이 프로젝트에는 Claude Code 커스텀 스킬이 포함되어 있습니다:
+이 프로젝트에는 Claude Code 커스텀 스킬(`.claude/skills/`)이 포함되어 있습니다.
+프롬프트에서 `/skill-name` 형태로 실행할 수 있습니다:
 
 | 명령어 | 설명 |
 |--------|------|
@@ -121,6 +122,8 @@ vercel --prod        # 프로덕션 배포
 | `/add-page` | 새 페이지/화면 추가 |
 | `/add-table` | 새 DB 테이블 + 마이그레이션 추가 |
 | `/deploy` | 서비스 배포 |
+
+스킬 파일은 `.claude/skills/<name>/SKILL.md`에 위치합니다.
 
 ## Stack-Specific Patterns
 
